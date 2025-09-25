@@ -18,7 +18,7 @@
               };
             };
             luks = {
-              size = "100%";
+              size = "888G";
               content = {
                 type = "luks";
                 name = "crypted";
@@ -28,7 +28,7 @@
                   allowDiscards = true;
                   #keyFile = "/tmp/secret.key";
                 };
-                additionalKeyFiles = [ "/tmp/additionalSecret.key" ];
+                #additionalKeyFiles = [ "/tmp/additionalSecret.key" ];
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
@@ -56,10 +56,25 @@
                     };
                     "/swap" = {
                       mountpoint = "/.swapvol";
-                      swap.swapfile.size = "20M";
+                      swap.swapfile.size = "8G";
                     };
                   };
                 };
+              };
+            };
+            WinBoot = {
+              size = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+              };
+            };
+            WinSystem = {
+              size = "100%";
+              content = {
+                type = "filesystem";
+                format = "ntfs";
               };
             };
           };

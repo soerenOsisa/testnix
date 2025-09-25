@@ -2,4 +2,5 @@ sudo nix --experimental-features "nix-command flakes" run github:nix-community/d
 mount | grep /mnt
 nixos-generate-config --no-filesystems --root /mnt
 cp disk.nix /etc/nixos/
-cp flake.nix /etc/nixos/
+cp flake.nix /etc/nixos/nixos-install --flake /mnt/etc/nixos/.#zmask
+echo "" > /tmp/secret.key
