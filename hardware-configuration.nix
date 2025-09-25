@@ -11,15 +11,22 @@
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelParams = [ "acpi_backlight=native" "psmouse.synaptics_intertouch=0" ];
+  boot.kernelPackages = lib.mkIf (lib.versionOlder pkgs.linux.version "6.8") pkgs.linuxPackages_latest;
   boot.extraModulePackages = [ ];
-
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  services.throttled.enable = lib.mkDefault false;
+  services.fprintd.enable = lib.mkDefault true;
+  security.pam.services = {
+    sudo.fprintAuth = lib.mkDefault true;
+    su.fprintAuth = lib.mkDefault true;
+    xscreensaver.fprintAuth = lib.mkDefault true;
+    login.fprintAuth = lib.mkDefault true;
+  };
+  hardware.intelgpu = {
+    driver = lib.mkIf (lib.versionAtLeast config.boot.kernelPackages.kernel.version "6.8") "xe";
+    vaapiDriver = "intel-media-driver";
+  };
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp0s13f0u1u4i5.useDHCP = lib.mkDefault true;
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
